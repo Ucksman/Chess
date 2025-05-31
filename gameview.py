@@ -6,6 +6,7 @@ class GameView(arcade.View):
 
     def __init__(self) -> None:
         super().__init__()
+        self.background_color = arcade.csscolor.BEIGE
         self.setup()
 
     def setup(self) -> None:

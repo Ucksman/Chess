@@ -2,8 +2,8 @@
 import arcade
 from gameview import GameView
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 1280
+WINDOW_WIDTH = 720
+WINDOW_HEIGHT = 720
 WINDOW_TITLE = "Chess"
 
 def main() -> None:
