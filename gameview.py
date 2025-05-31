@@ -7,6 +7,8 @@ import arcade
 
 class GameView(arcade.View):
     "Main game class"
+
+    moveCount: int
     board: arcade.SpriteList[arcade.Sprite]
     camera: arcade.camera.Camera2D
     starting_pos: GamePosition
@@ -14,9 +16,10 @@ class GameView(arcade.View):
 
     def __init__(self) -> None:
         super().__init__()
+        self.moveCount = 0
         self.background_color = arcade.csscolor.BEIGE
         self.setup()
-        self.starting_pos = GamePosition("STARTING_POSITION.txt")
+        self.starting_pos = GamePosition("scholar's_mate.txt")
         self.pieceList = self.starting_pos.pieceList
 
     def setup(self) -> None:

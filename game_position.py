@@ -23,8 +23,6 @@ class PieceKind(Enum):
     BLACK_KING = "k"
 
 
-
-
 class Piece(arcade.Sprite):
     '''This class represent any piece of the classical chessboard'''
     __kind: PieceKind
@@ -49,7 +47,7 @@ class GamePosition:
         self.ReadPosition(pos=pos)
 
     def add_piece(self, i: int, j: int, kind: PieceKind) -> None:
-        new_piece = Piece(kind=kind, path_or_texture=GamePosition.match_PieceKind(kind=kind), center_x=j*GRID_PIXEL_SIZE, center_y=(7-i)*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+        new_piece = Piece(kind=kind, path_or_texture=GamePosition.match_PieceKind(kind=kind), center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
         self.__pieceList.append(new_piece)
 
     @staticmethod
@@ -78,18 +76,18 @@ class GamePosition:
             for j in range(len(data[i])):
                 character = data[i][j]
                 match character:
-                    case PieceKind.WHITE_PAWN.value: self.add_piece(i, j, PieceKind.WHITE_PAWN)
-                    case PieceKind.BLACK_PAWN.value: self.add_piece(i, j, PieceKind.BLACK_PAWN)
-                    case PieceKind.WHITE_KNIGHT.value: self.add_piece(i, j, PieceKind.WHITE_KNIGHT)
-                    case PieceKind.BLACK_KNIGHT.value: self.add_piece(i, j, PieceKind.BLACK_KNIGHT)
-                    case PieceKind.WHITE_BISHOP.value: self.add_piece(i, j, PieceKind.WHITE_BISHOP)
-                    case PieceKind.BLACK_BISHOP.value: self.add_piece(i, j, PieceKind.BLACK_BISHOP)
-                    case PieceKind.WHITE_ROOK.value: self.add_piece(i, j, PieceKind.WHITE_ROOK)
-                    case PieceKind.BLACK_ROOK.value: self.add_piece(i, j, PieceKind.BLACK_ROOK)
-                    case PieceKind.WHITE_QUEEN.value: self.add_piece(i, j, PieceKind.WHITE_QUEEN)
-                    case PieceKind.BLACK_QUEEN.value: self.add_piece(i, j, PieceKind.BLACK_QUEEN)
-                    case PieceKind.WHITE_KING.value: self.add_piece(i, j, PieceKind.WHITE_KING)
-                    case PieceKind.BLACK_KING.value: self.add_piece(i, j, PieceKind.BLACK_KING)
+                    case PieceKind.WHITE_PAWN.value: self.add_piece(7-i, j, PieceKind.WHITE_PAWN)
+                    case PieceKind.BLACK_PAWN.value: self.add_piece(7-i, j, PieceKind.BLACK_PAWN)
+                    case PieceKind.WHITE_KNIGHT.value: self.add_piece(7-i, j, PieceKind.WHITE_KNIGHT)
+                    case PieceKind.BLACK_KNIGHT.value: self.add_piece(7-i, j, PieceKind.BLACK_KNIGHT)
+                    case PieceKind.WHITE_BISHOP.value: self.add_piece(7-i, j, PieceKind.WHITE_BISHOP)
+                    case PieceKind.BLACK_BISHOP.value: self.add_piece(7-i, j, PieceKind.BLACK_BISHOP)
+                    case PieceKind.WHITE_ROOK.value: self.add_piece(7-i, j, PieceKind.WHITE_ROOK)
+                    case PieceKind.BLACK_ROOK.value: self.add_piece(7-i, j, PieceKind.BLACK_ROOK)
+                    case PieceKind.WHITE_QUEEN.value: self.add_piece(7-i, j, PieceKind.WHITE_QUEEN)
+                    case PieceKind.BLACK_QUEEN.value: self.add_piece(7-i, j, PieceKind.BLACK_QUEEN)
+                    case PieceKind.WHITE_KING.value: self.add_piece(7-i, j, PieceKind.WHITE_KING)
+                    case PieceKind.BLACK_KING.value: self.add_piece(7-i, j, PieceKind.BLACK_KING)
     
     
     @property
