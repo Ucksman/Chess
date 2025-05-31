@@ -1,8 +1,18 @@
 
+from enum import Enum, auto
+from arcade import Vec2
+from game_position import Game, PieceKind, Piece
 import arcade
+
+SPRITE_SCALING = 0.5
+SPRITE_PIXEL_SIZE = 150
+GRID_PIXEL_SIZE = int(SPRITE_PIXEL_SIZE * SPRITE_SCALING)
 
 class GameView(arcade.View):
     "Main game class"
+    board: arcade.SpriteList[arcade.Sprite]
+    camera: arcade.camera.Camera2D
+    starting_pos: Game
 
     def __init__(self) -> None:
         super().__init__()
@@ -10,8 +20,30 @@ class GameView(arcade.View):
         self.setup()
 
     def setup(self) -> None:
-        """Set up the game here."""
-        pass
+        """Sets up the game."""
+
+        self.board = arcade.SpriteList()
+        self.camera = arcade.camera.Camera2D()
+        self.camera.position = Vec2(300, 300)
+
+        for i in range(8):
+            for j in range(8):
+                if (i+j) % 2 == 0:
+                    sprite = arcade.Sprite(
+                        "assets/chess_set/board_squares/square_brown_dark.png",
+                        scale=SPRITE_SCALING,
+                        center_x=GRID_PIXEL_SIZE*i,
+                        center_y=GRID_PIXEL_SIZE*j
+                    )
+                else:
+                    sprite = arcade.Sprite(
+                        "assets/chess_set/board_squares/square_brown_light.png",
+                        scale=SPRITE_SCALING,
+                        center_x=GRID_PIXEL_SIZE*i,
+                        center_y=GRID_PIXEL_SIZE*j
+                    )
+                self.board.append(sprite)
+
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         match button:
@@ -28,5 +60,7 @@ class GameView(arcade.View):
                 pass
 
     def on_draw(self) -> None:
-        """Render the screen."""
+        """Renders the screen."""
         self.clear() # always start with self.clear()
+        with self.camera.activate():
+            self.board.draw()
