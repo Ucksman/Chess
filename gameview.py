@@ -1,23 +1,23 @@
 
 from enum import Enum, auto
 from arcade import Vec2
-from game_position import Game, PieceKind, Piece
+from game_position import GamePosition, PieceKind, Piece, GRID_PIXEL_SIZE, SPRITE_SCALING, SPRITE_PIXEL_SIZE
 import arcade
 
-SPRITE_SCALING = 0.5
-SPRITE_PIXEL_SIZE = 150
-GRID_PIXEL_SIZE = int(SPRITE_PIXEL_SIZE * SPRITE_SCALING)
 
 class GameView(arcade.View):
     "Main game class"
     board: arcade.SpriteList[arcade.Sprite]
     camera: arcade.camera.Camera2D
-    starting_pos: Game
+    starting_pos: GamePosition
+    pieceList: arcade.SpriteList[Piece]
 
     def __init__(self) -> None:
         super().__init__()
         self.background_color = arcade.csscolor.BEIGE
         self.setup()
+        self.starting_pos = GamePosition("STARTING_POSITION.txt")
+        self.pieceList = self.starting_pos.pieceList
 
     def setup(self) -> None:
         """Sets up the game."""
@@ -64,3 +64,4 @@ class GameView(arcade.View):
         self.clear() # always start with self.clear()
         with self.camera.activate():
             self.board.draw()
+            self.pieceList.draw()
