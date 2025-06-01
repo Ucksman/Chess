@@ -1,9 +1,8 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from pieces import Piece, PieceKind, WPawn, GRID_PIXEL_SIZE, SPRITE_SCALING
+from pieces import Piece, PieceKind, GRID_PIXEL_SIZE, SPRITE_SCALING, Pawn, Knight, Bishop, Rook, Queen, King
 import arcade
-
 
 
 class GamePosition:
@@ -15,24 +14,18 @@ class GamePosition:
         self.ReadPosition(pos=pos)
 
     def add_piece(self, i: int, j: int, kind: PieceKind) -> None:
-        new_piece = Piece(kind=kind, path_or_texture=GamePosition.match_PieceKind(kind=kind), center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+        new_piece = Piece(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
         self.__pieceList.append(new_piece)
 
-    @staticmethod
-    def match_PieceKind(kind: PieceKind) -> str:
-        match kind:
-            case PieceKind.WHITE_PAWN: return "assets/chess_set/PNG_No_shadow/w_pawn_svg_NoShadow.png"
-            case PieceKind.BLACK_PAWN: return "assets/chess_set/PNG_No_shadow/b_pawn_svg_NoShadow.png"
-            case PieceKind.WHITE_KNIGHT: return "assets/chess_set/PNG_No_shadow/w_knight_svg_NoShadow.png"
-            case PieceKind.BLACK_KNIGHT: return "assets/chess_set/PNG_No_shadow/b_knight_svg_NoShadow.png"
-            case PieceKind.WHITE_BISHOP: return "assets/chess_set/PNG_No_shadow/w_bishop_svg_NoShadow.png"
-            case PieceKind.BLACK_BISHOP: return "assets/chess_set/PNG_No_shadow/b_bishop_svg_NoShadow.png"
-            case PieceKind.WHITE_ROOK: return "assets/chess_set/PNG_No_shadow/w_rook_svg_NoShadow.png"
-            case PieceKind.BLACK_ROOK: return "assets/chess_set/PNG_No_shadow/b_rook_svg_NoShadow.png"
-            case PieceKind.WHITE_QUEEN: return "assets/chess_set/PNG_No_shadow/w_queen_svg_NoShadow.png"
-            case PieceKind.BLACK_QUEEN: return "assets/chess_set/PNG_No_shadow/b_queen_svg_NoShadow.png"
-            case PieceKind.WHITE_KING: return "assets/chess_set/PNG_No_shadow/w_king_svg_NoShadow.png"
-            case PieceKind.BLACK_KING: return "assets/chess_set/PNG_No_shadow/b_king_svg_NoShadow.png"
+    def new_piece(self, i: int, j: int, kind :PieceKind) -> Piece:
+        match Piece.match_PieceKind_to_type(kind=kind):
+            case 'p': return Pawn(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case 'n': return Knight(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case 'b': return Bishop(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case 'r': return Rook(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case 'q': return Queen(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case 'k': return King(kind=kind, center_x=j*GRID_PIXEL_SIZE, center_y=i*GRID_PIXEL_SIZE, scale=SPRITE_SCALING*0.8)
+            case _: raise ValueError(f"Unknown match_PieceKind_to_type output {Piece.match_PieceKind_to_type(kind=kind)}")
 
     def ReadPosition(self, pos: str) -> None:
         '''Creates a chess position from a txt file.'''

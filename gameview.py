@@ -1,7 +1,7 @@
 
 from arcade import Vec2
 from game_position import GamePosition
-from pieces import PieceKind, Piece, GRID_PIXEL_SIZE, SPRITE_SCALING, SPRITE_PIXEL_SIZE
+from pieces import PieceKind, Piece, GRID_PIXEL_SIZE, SPRITE_SCALING, SPRITE_PIXEL_SIZE, Square
 import arcade
 
 
@@ -13,7 +13,7 @@ class GameView(arcade.View):
     picked_piece: arcade.SpriteList[Piece]
     mouse_x: int
     mouse_y: int
-    board: arcade.SpriteList[arcade.Sprite]
+    board: arcade.SpriteList[Square]
     camera: arcade.camera.Camera2D
     starting_pos: GamePosition
     pieceList: arcade.SpriteList[Piece]
@@ -40,14 +40,14 @@ class GameView(arcade.View):
         for i in range(8):
             for j in range(8):
                 if (i+j) % 2 == 0:
-                    sprite = arcade.Sprite(
+                    sprite = Square(
                         "assets/chess_set/board_squares/square_brown_dark.png",
                         scale=SPRITE_SCALING,
                         center_x=GRID_PIXEL_SIZE*i,
                         center_y=GRID_PIXEL_SIZE*j
                     )
                 else:
-                    sprite = arcade.Sprite(
+                    sprite = Square(
                         "assets/chess_set/board_squares/square_brown_light.png",
                         scale=SPRITE_SCALING,
                         center_x=GRID_PIXEL_SIZE*i,
@@ -75,10 +75,15 @@ class GameView(arcade.View):
         match button:
             case arcade.MOUSE_BUTTON_LEFT:
                 if self.piece_is_picked:
-                    self.piece_is_picked = False
                     sprite = self.picked_piece[0]
-                    self.replace(sprite)
+                    spot = min(self.board, key=lambda square: GameView.distance_between(sprite, square))
+                    self.piece_is_picked = False
                     self.picked_piece.pop()
+                    if sprite.can_move(spot=spot):
+                        self.replace(sprite)
+                        sprite.realPos = sprite.position
+                    else:
+                        sprite.position = sprite.realPos
             case arcade.MOUSE_BUTTON_RIGHT:
                 pass
 
