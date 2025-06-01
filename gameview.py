@@ -1,7 +1,7 @@
 
-from enum import Enum, auto
 from arcade import Vec2
-from game_position import GamePosition, PieceKind, Piece, GRID_PIXEL_SIZE, SPRITE_SCALING, SPRITE_PIXEL_SIZE
+from game_position import GamePosition
+from pieces import PieceKind, Piece, GRID_PIXEL_SIZE, SPRITE_SCALING, SPRITE_PIXEL_SIZE
 import arcade
 
 
@@ -9,6 +9,10 @@ class GameView(arcade.View):
     "Main game class"
 
     moveCount: int
+    piece_is_picked: bool
+    picked_piece: arcade.SpriteList[Piece]
+    mouse_x: int
+    mouse_y: int
     board: arcade.SpriteList[arcade.Sprite]
     camera: arcade.camera.Camera2D
     starting_pos: GamePosition
@@ -17,9 +21,13 @@ class GameView(arcade.View):
     def __init__(self) -> None:
         super().__init__()
         self.moveCount = 0
+        self.piece_is_picked = False
+        self.picked_piece = arcade.SpriteList()
+        self.mouse_x = 0
+        self.mouse_y = 0
         self.background_color = arcade.csscolor.BEIGE
         self.setup()
-        self.starting_pos = GamePosition("scholar's_mate.txt")
+        self.starting_pos = GamePosition("STARTING_POSITION.txt")
         self.pieceList = self.starting_pos.pieceList
 
     def setup(self) -> None:
@@ -51,16 +59,38 @@ class GameView(arcade.View):
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         match button:
             case arcade.MOUSE_BUTTON_LEFT:
-                pass
+                sprites: list[Piece] = arcade.get_sprites_at_point(Vec2(x-GRID_PIXEL_SIZE*0.75, y-GRID_PIXEL_SIZE*0.75), self.pieceList)
+                if len(sprites) == 0:
+                    return None
+                
+                sprite: Piece = sprites[0]
+                new_pos = self.camera.unproject((x, y))
+                sprite.position = (new_pos.x, new_pos.y)
+                self.piece_is_picked = True
+                self.picked_piece.append(sprite)
             case arcade.MOUSE_BUTTON_RIGHT:
                 pass
     
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int) -> None:
         match button:
             case arcade.MOUSE_BUTTON_LEFT:
-                pass
+                if self.piece_is_picked:
+                    self.piece_is_picked = False
+                    sprite = self.picked_piece[0]
+                    self.replace(sprite)
+                    self.picked_piece.pop()
             case arcade.MOUSE_BUTTON_RIGHT:
                 pass
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> None:
+        self.mouse_x = x + int(GRID_PIXEL_SIZE * 0.75)
+        self.mouse_y = y + int(GRID_PIXEL_SIZE * 0.75)
+
+    def on_update(self, delta_time : float) -> None:
+        
+        if self.piece_is_picked:
+            new_pos = self.camera.unproject(self.camera.unproject((self.mouse_x, self.mouse_y)))
+            self.picked_piece[0].position = (new_pos.x, new_pos.y)
 
     def on_draw(self) -> None:
         """Renders the screen."""
@@ -68,3 +98,12 @@ class GameView(arcade.View):
         with self.camera.activate():
             self.board.draw()
             self.pieceList.draw()
+
+    @staticmethod
+    def distance_between(sprite1: arcade.Sprite, sprite2: arcade.Sprite) -> float:
+        return max(abs(sprite1.center_x - sprite2.center_x), abs(sprite1.center_y - sprite2.center_y))
+
+    def replace(self, sprite: Piece) -> None:
+        best_spot = min(self.board, key=lambda square: GameView.distance_between(sprite, square))
+        sprite.center_x = best_spot.center_x
+        sprite.center_y = best_spot.center_y
